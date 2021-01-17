@@ -46,7 +46,7 @@ class MainWindow(QWidget):
 
         out = crawl(ScheduleSpider)
         print(out)
-        self.textEdit.setText(out)
+        self.textEdit.setText(out[0])
         self.pushButton.clicked.connect(onBtnClicked)
 
 
