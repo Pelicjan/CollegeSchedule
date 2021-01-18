@@ -3,6 +3,7 @@ from scrapy.http import FormRequest
 from scrapy.http import Request
 import login_credentials
 
+
 class ScheduleSpider(scrapy.Spider):
     name = 'ScheduleSpider'
     start_urls = ['https://s1.wcy.wat.edu.pl/ed1/']
