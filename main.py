@@ -1,6 +1,7 @@
 import sys
 import os
-
+from _datetime import datetime
+import roman
 from PySide6 import QtGui
 from PySide6.QtWidgets import QApplication, QWidget, QTextEdit, QPushButton, QGridLayout, QVBoxLayout, QLabel, \
     QTableWidget, QCheckBox
@@ -42,6 +43,7 @@ class MainWindow(QWidget):
         ui_file.close()
         self.raw_schedule = tuple
         self.schedule_selector = None
+        self.week = 1
 
         self.main_widget = self.window.findChild(QWidget, 'CollegeSchedule')
         self.table_widget = self.window.findChild(QTableWidget, 'tableWidget')
@@ -49,8 +51,15 @@ class MainWindow(QWidget):
         self.previous_week = self.window.findChild(QPushButton, 'previousWeek')
         self.check = self.window.findChild(QCheckBox, 'check')
 
-        self.next_week.clicked.connect(self.download_schedule)
+        self.next_week.clicked.connect(lambda: self.get_week(self.week + 1))
+        self.previous_week.clicked.connect(lambda: self.get_week(self.week - 1))
         self.download_schedule()
+        today = (datetime.today().day, datetime.today().month)
+        weeks = self.get_all_weeks()
+        for i, week in enumerate(weeks, start=1):
+            if today in week:
+                self.get_week(i)
+                break
 
     def download_schedule(self):
         # self.raw_schedule = crawl(ScheduleSpider)
@@ -62,25 +71,40 @@ class MainWindow(QWidget):
                              sel.xpath("//table[@class='tableGrayWhite']").get())
         # OFFLINE TEST
         self.schedule_selector = Selector(text=self.raw_schedule[0])
-        self.get_week(1)
+
+    def get_all_weeks(self) -> list:
+        weeks = list()
+        for i in range(22):
+            first_day = self.schedule_selector \
+                .xpath("//th[position()={} and @class='thFormList1HSheTeaGrpHTM3']/nobr/text()"
+                       .format(4 + i)).getall()
+            next_days = self.schedule_selector \
+                .xpath("//td[position()={} and @class='tdFormList1DDSheTeaGrpHTM3']/nobr/text()"
+                       .format(4 + i)).getall()
+            days = first_day + next_days
+            dates = list()
+            for j in range(0, len(days), 2):
+                dates += [(int(days[j]), roman.fromRoman(days[j + 1]))]
+            weeks += [dates]
+        return weeks
 
     def get_week(self, number):
         first_day = self.schedule_selector \
             .xpath("//th[position()={} and @class='thFormList1HSheTeaGrpHTM3']/nobr/text()"
                    .format(3 + number)).getall()
-
         next_days = self.schedule_selector \
             .xpath("//td[position()={} and @class='tdFormList1DDSheTeaGrpHTM3']/nobr/text()"
                    .format(3 + number)).getall()
-
         self.set_headers(first_day + next_days)
 
         blocks = self.schedule_selector \
             .xpath("//td[position()={} and @class='tdFormList1DSheTeaGrpHTM3']//table "
                    "| //td[position()={} and @class='tdFormList1DSheTeaGrpHTM3' and count(*)=0]/text()"
                    .format(2 + number, 2 + number)).getall()
-        print(blocks)
         self.set_blocks(blocks)
+
+        if 1 <= number <= 22:
+            self.week = number
 
     def set_headers(self, days):
         dates = list()
@@ -102,6 +126,8 @@ class MainWindow(QWidget):
                 number = selector.xpath("//tbody/tr[3]/td/nobr/text()").get()
                 print(subject, category, room, teacher, number)
                 self.add_block(row, column, subject, category, room, teacher, number)
+            else:
+                self.table_widget.removeCellWidget(row, column)
             row += 1
             if i % 7 == 0:
                 row = 0
