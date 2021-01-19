@@ -1,21 +1,163 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CollegeSchedule</class>
- <widget class="QWidget" name="CollegeSchedule">
+ <class>college_schedule</class>
+ <widget class="QWidget" name="college_schedule">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1079</width>
-    <height>837</height>
+    <width>1100</width>
+    <height>840</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1100</width>
+    <height>840</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1100</width>
+    <height>840</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>CollegeSchedule</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-    <widget class="QTableWidget" name="tableWidget">
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>20</number>
+   </property>
+   <property name="horizontalSpacing">
+    <number>20</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>6</number>
+   </property>
+   <item row="8" column="1" colspan="4">
+    <widget class="QPushButton" name="previous_week">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Poprzedni tydzień</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="9" column="1" colspan="4">
+    <widget class="QPushButton" name="next_week">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Następny tydzień</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" colspan="3">
+    <widget class="QComboBox" name="group_box">
+     <property name="currentText">
+      <string comment="Wybierz grupę..." extracomment="Wybierz grupę..."/>
+     </property>
+     <property name="maxVisibleItems">
+      <number>20</number>
+     </property>
+     <property name="placeholderText">
+      <string comment="Wybierz grupę..." extracomment="Wybierz grupę..."/>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLabel" name="group_label">
+     <property name="text">
+      <string>Grupa:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="0" rowspan="10">
+    <widget class="QTableWidget" name="table_widget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -24,14 +166,14 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>714</width>
-       <height>796</height>
+       <width>720</width>
+       <height>812</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>714</width>
-       <height>726</height>
+       <width>720</width>
+       <height>812</height>
       </size>
      </property>
      <property name="verticalScrollBarPolicy">
@@ -45,6 +187,9 @@
      </property>
      <property name="selectionMode">
       <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+     <property name="cornerButtonEnabled">
+      <bool>false</bool>
      </property>
      <property name="rowCount">
       <number>7</number>
@@ -71,7 +216,7 @@
      </row>
      <row>
       <property name="text">
-       <string>9:50 - 11:25</string>
+       <string>09:50 - 11:25</string>
       </property>
      </row>
      <row>
@@ -135,270 +280,482 @@
       </property>
      </column>
      <item row="0" column="0">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
      <item row="0" column="1">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="0" column="2">
+     <item row="0" column="2">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="0" column="3">
+     <item row="0" column="3">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="0" column="4">
+     <item row="0" column="4">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="0" column="5">
+     <item row="0" column="5">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="0" column="6">
+     <item row="0" column="6">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="1" column="0">
+     <item row="1" column="0">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
      <item row="1" column="1">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="1" column="2">
+     <item row="1" column="2">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="1" column="3">
+     <item row="1" column="3">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="1" column="4">
+     <item row="1" column="4">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="1" column="5">
+     <item row="1" column="5">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="1" column="6">
+     <item row="1" column="6">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="2" column="0">
+     <item row="2" column="0">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
      <item row="2" column="1">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="2" column="2">
+     <item row="2" column="2">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="2" column="3">
+     <item row="2" column="3">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="2" column="4">
+     <item row="2" column="4">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="2" column="5">
+     <item row="2" column="5">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="2" column="6">
+     <item row="2" column="6">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="3" column="0">
+     <item row="3" column="0">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
      <item row="3" column="1">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="3" column="2">
+     <item row="3" column="2">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="3" column="3">
+     <item row="3" column="3">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="3" column="4">
+     <item row="3" column="4">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="3" column="5">
+     <item row="3" column="5">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="3" column="6">
+     <item row="3" column="6">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="4" column="0">
+     <item row="4" column="0">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
      <item row="4" column="1">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="4" column="2">
+     <item row="4" column="2">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="4" column="3">
+     <item row="4" column="3">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="4" column="4">
+     <item row="4" column="4">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="4" column="5">
+     <item row="4" column="5">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="4" column="6">
+     <item row="4" column="6">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="5" column="0">
+     <item row="5" column="0">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
      <item row="5" column="1">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="5" column="2">
+     <item row="5" column="2">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="5" column="3">
+     <item row="5" column="3">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="5" column="4">
+     <item row="5" column="4">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="5" column="5">
+     <item row="5" column="5">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="5" column="6">
+     <item row="5" column="6">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="6" column="0">
+     <item row="6" column="0">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
      <item row="6" column="1">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="6" column="2">
+     <item row="6" column="2">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="6" column="3">
+     <item row="6" column="3">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="6" column="4">
+     <item row="6" column="4">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="6" column="5">
+     <item row="6" column="5">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
-	 <item row="6" column="6">
+     <item row="6" column="6">
+      <property name="text">
+       <string/>
+      </property>
       <property name="flags">
        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
       </property>
      </item>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QPushButton" name="nextWeek">
+   <item row="6" column="1" colspan="4">
+    <widget class="QPushButton" name="save_note">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>50</height>
+      </size>
+     </property>
      <property name="text">
-      <string>Następny tydzień</string>
+      <string>Zapisz notatkę</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QPushButton" name="previousWeek">
+   <item row="0" column="4">
+    <widget class="QLabel" name="author_label">
      <property name="text">
-      <string>Poprzedni tydzień</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Autor: Paweł Nosażewski&lt;/p&gt;&lt;p&gt;WCY18IJ5S1&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="QCheckBox" name="show">
+   <item row="5" column="1">
+    <spacer name="verticalSpacer_4">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="1" colspan="4">
+    <widget class="QTextEdit" name="note">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>400</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>400</width>
+       <height>400</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="3">
+    <widget class="QPushButton" name="download_data">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="text">
-      <string>Pokaż</string>
+      <string>Pobierz dane</string>
      </property>
     </widget>
    </item>

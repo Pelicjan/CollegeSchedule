@@ -11,6 +11,7 @@ class ScheduleSpider(scrapy.Spider):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.group = kwargs.get('args').get('group')
         self.output_callback = kwargs.get('args').get('callback')
 
     def parse(self, response, **kwargs):
@@ -23,7 +24,7 @@ class ScheduleSpider(scrapy.Spider):
             callback=self.go_to_schedule)
 
     def go_to_schedule(self, response):
-        url = response.url + "&mid=328&iid=20204&exv=I8J5S1&pos=0&rdo=1"
+        url = response.url + "&mid=328&iid=20204&exv={}&pos=0&rdo=1".format(self.group)
         return Request(url=url, callback=self.get_schedule)
 
     def get_schedule(self, response):
