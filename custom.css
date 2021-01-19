@@ -1,0 +1,62 @@
+QLabel, QCheckBox {
+    color: #b7b7b7;
+}
+QTableView > QHeaderView::section {
+    border: none;
+}
+QTableView {
+    border: none;
+}
+QHeaderView::section {
+    color: #a9a9a9;
+    text-transform: none;
+    background-color: #232629;
+    border-radius: 0;
+    padding: 0;
+}
+QHeaderView::section:checked {
+    color: #8bc34a;
+}
+QTableCornerButton::section {
+    background-color: #232629;
+    border: none;
+}
+QTextEdit {
+    selection-color: #4f5b62;
+}
+.block {
+    background: #242924;
+    border: 1px solid #8bc34a;
+}
+.block[Selected=true] {
+    background: #03bef67a;
+}
+.block[Note=true] {
+    background-image: url("Icons/chat-alert.png");
+    background-repeat: no-repeat;
+    background-position: right top;
+}
+QPushButton#next_week {
+    background-image: url("Icons/chevron-triple-right.png");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: contain;
+}
+QPushButton#previous_week {
+    background-image: url("Icons/chevron-triple-left.png");
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: contain;
+}
+QPushButton#save_note {
+    background-image: url("Icons/content-save.png");
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: contain;
+}
+QPushButton#download_data {
+    background-image: url("Icons/cloud-download.png");
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: contain;
+}
