@@ -4,7 +4,7 @@ from _datetime import datetime
 from pathlib import Path
 import roman
 import pickle
-from PySide6 import QtGui
+from PySide6 import QtGui, QtCore
 from PySide6.QtWidgets import QApplication, QWidget, QTextEdit, QPushButton, QVBoxLayout, QLabel, \
     QTableWidget, QComboBox
 from PySide6.QtCore import QFile, Qt
@@ -39,11 +39,11 @@ class MainWindow(QWidget):
         ui_file.open(QFile.ReadOnly)
         self.window = loader.load(ui_file, self)
         ui_file.close()
-        self.data = dict()
+        self.data = {'notes': dict(), 'hidden': list()}
         self.raw_schedule = tuple()
         self.schedule_selector = None
         self.week = 1
-        self.selected_block = (-1, -1)
+        self.sel_block = (-1, -1)
 
         self.load_data()
 
@@ -61,6 +61,7 @@ class MainWindow(QWidget):
         self.save_note_button.clicked.connect(self.save_note)
         self.download_button.clicked.connect(self.download_schedule)
         self.table_widget.cellClicked.connect(self.block_clicked)
+        self.table_widget.cellDoubleClicked.connect(self.block_double_clicked)
 
         self.get_groups()
         self.download_schedule()
@@ -77,11 +78,13 @@ class MainWindow(QWidget):
     def download_schedule(self):
         # self.raw_schedule = crawl(ScheduleSpider)
         # OFFLINE TEST
-        f = open("plan.txt", "r", encoding="utf8")
+        f = open("e-Dziekanat.html", "r", encoding="iso-8859-2")
         html = f.read()
         sel = Selector(text=html)
         self.raw_schedule = (sel.xpath("//table[@class='tableFormList2SheTeaGrpHTM']").get(),
-                             sel.xpath("//table[@class='tableGrayWhite']").get())
+                             sel.xpath("//table[@class='tableFormExtForm1ML1']//tr[3]//table[@class='tableGrayWhite']")
+                             .get(),
+                             sel.xpath("//td[@class='tdFormEdit2']//table[@class='tableGrayWhite']").get())
         # OFFLINE TEST
         self.schedule_selector = Selector(text=self.raw_schedule[0])
 
@@ -156,8 +159,11 @@ class MainWindow(QWidget):
         layout.addWidget(QLabel(room, alignment=Qt.AlignCenter))
         layout.addWidget(QLabel(teacher, alignment=Qt.AlignCenter))
         layout.addWidget(QLabel(number, alignment=Qt.AlignCenter))
-        if self.get_index(row, column) in self.data:
+        if self.get_index(row, column) in self.data['notes']:
             block.setProperty('Note', 'true')
+            block.setStyle(block.style())
+        if self.get_index(row, column) in self.data['hidden']:
+            block.setProperty('Hide', 'true')
             block.setStyle(block.style())
         block.setLayout(layout)
         block.setProperty('class', 'block')
@@ -167,18 +173,33 @@ class MainWindow(QWidget):
         return row + column * 7 + (self.week - 1) * 49
 
     def block_clicked(self, row, column):
-        if self.selected_block[0] != row or self.selected_block[1] != column:
-            if self.selected_block[0] != -1 and self.selected_block[1] != -1:
-                previous_block = self.table_widget.cellWidget(self.selected_block[0], self.selected_block[1])
+        if self.sel_block[0] != row or self.sel_block[1] != column:
+            if self.sel_block[0] != -1 and self.sel_block[1] != -1:
+                previous_block = self.table_widget.cellWidget(self.sel_block[0], self.sel_block[1])
                 if previous_block is not None:
                     previous_block.setProperty('Selected', 'false')
                     previous_block.setStyle(previous_block.style())
-            self.selected_block = (row, column)
+            self.sel_block = (row, column)
             block = self.table_widget.cellWidget(row, column)
             if block is not None:
                 block.setProperty('Selected', 'true')
                 block.setStyle(block.style())
             self.load_note(self.get_index(row, column))
+
+    def block_double_clicked(self, row, column):
+        block = self.table_widget.cellWidget(row, column)
+        if block is not None:
+            visible = block.property('Hide') if block.property('Hide') is not None else False
+            block.setProperty('Hide', not visible)
+            block.setStyle(block.style())
+            children = block.findChildren(QLabel)
+            for child in children:
+                child.setStyle(child.style())
+            if not visible:
+                self.data['hidden'].append(self.get_index(row, column))
+            else:
+                if self.get_index(row, column) in self.data['hidden']:
+                    self.data['hidden'].remove(self.get_index(row, column))
 
     def load_data(self):
         data_file = Path("schedule.data")
@@ -191,22 +212,22 @@ class MainWindow(QWidget):
             pickle.dump(self.data, f)
 
     def load_note(self, index):
-        if index in self.data:
-            self.note.setPlainText(self.data[index])
+        if index in self.data['notes']:
+            self.note.setPlainText(self.data['notes'][index])
         else:
             self.note.setPlainText('')
 
     def save_note(self):
-        if self.note.toPlainText() == '':
-            self.data.pop(self.get_index(self.selected_block[0], self.selected_block[1]), None)
-            block = self.table_widget.cellWidget(self.selected_block[0], self.selected_block[1])
-            block.setProperty('Note', 'false')
-            block.setStyle(block.style())
-        else:
-            self.data[self.get_index(self.selected_block[0], self.selected_block[1])] = self.note.toPlainText()
-            block = self.table_widget.cellWidget(self.selected_block[0], self.selected_block[1])
-            block.setProperty('Note', 'true')
-            block.setStyle(block.style())
+        block = self.table_widget.cellWidget(self.sel_block[0], self.sel_block[1])
+        if block is not None:
+            if self.note.toPlainText() == '':
+                self.data['notes'].pop(self.get_index(self.sel_block[0], self.sel_block[1]), None)
+                block.setProperty('Note', 'false')
+                block.setStyle(block.style())
+            else:
+                self.data['notes'][self.get_index(self.sel_block[0], self.sel_block[1])] = self.note.toPlainText()
+                block.setProperty('Note', 'true')
+                block.setStyle(block.style())
 
     def closeEvent(self, event):
         self.save_data()
@@ -230,5 +251,8 @@ if __name__ == "__main__":
     stylesheet = app.styleSheet()
     with open('custom.css') as file:
         app.setStyleSheet(stylesheet + file.read())
+    widget.setWindowTitle("College Schedule")
+    widget.setWindowIcon(QtGui.QIcon("Icons/timetable.png"))
+    widget.move(QtGui.QGuiApplication.primaryScreen().geometry().center() - widget.window.rect().center())
     widget.show()
     sys.exit(app.exec_())

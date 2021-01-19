@@ -24,12 +24,15 @@ class ScheduleSpider(scrapy.Spider):
             callback=self.go_to_schedule)
 
     def go_to_schedule(self, response):
-        url = response.url + "&mid=328&iid=20204&exv={}&pos=0&rdo=1".format(self.group)
+        # url = response.url + "&mid=328&iid=20204&exv={}&pos=0&rdo=1".format(self.group)
+        url = response.url + "&mid=328&iid=20201&exv={}&pos=0&rdo=1".format(self.group)
         return Request(url=url, callback=self.get_schedule)
 
     def get_schedule(self, response):
         self.output = (response.xpath("//table[@class='tableFormList2SheTeaGrpHTM']").get(),
-                       response.xpath("//table[@class='tableGrayWhite']").get())
+                       response.xpath("//table[@class='tableFormExtForm1ML1']//tr[3]//table[@class='tableGrayWhite']")
+                       .get(),
+                       response.xpath("//td[@class='tdFormEdit2']//table[@class='tableGrayWhite']").get())
 
     def close(self, spider, reason):
         self.output_callback(self.output)

@@ -36,6 +36,13 @@ QTextEdit {
     background-repeat: no-repeat;
     background-position: right top;
 }
+.block[Hide=true] {
+    background: #03242924;
+    border: none;
+}
+.block[Hide=true] QLabel {
+    color: #66b7b7b7;
+}
 QPushButton#next_week {
     background-image: url("Icons/chevron-triple-right.png");
     background-repeat: no-repeat;
