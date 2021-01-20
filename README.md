@@ -12,6 +12,8 @@ CollegeSchedule uses:
 - [Qt (PySide6)](https://www.qt.io/blog/qt-for-python-6-released)
 - [qt_material](https://pypi.org/project/qt-material/)
 - [requests](https://pypi.org/project/requests/)
+- [urllib3](https://pypi.org/project/urllib3/)
+- [Scrapy](https://scrapy.org/)
 - [roman](https://pypi.org/project/roman/)
 
 ### Screenshots
