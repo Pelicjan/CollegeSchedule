@@ -67,3 +67,9 @@ QPushButton#download_data {
     background-position: left center;
     background-size: contain;
 }
+QComboBox {
+    combobox-popup: 0;
+}
+QComboBox QAbstractItemView {
+    selection-color: #8bc34a;
+}

@@ -107,7 +107,7 @@
       <string comment="Wybierz grupę..." extracomment="Wybierz grupę..."/>
      </property>
      <property name="maxVisibleItems">
-      <number>20</number>
+      <number>18</number>
      </property>
      <property name="placeholderText">
       <string comment="Wybierz grupę..." extracomment="Wybierz grupę..."/>

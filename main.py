@@ -4,30 +4,13 @@ from _datetime import datetime
 from pathlib import Path
 import roman
 import pickle
-from PySide6 import QtGui, QtCore
+from PySide6 import QtGui
 from PySide6.QtWidgets import QApplication, QWidget, QTextEdit, QPushButton, QVBoxLayout, QLabel, \
     QTableWidget, QComboBox
 from PySide6.QtCore import QFile, Qt
 from PySide6.QtUiTools import QUiLoader
-from scrapy.crawler import CrawlerProcess
-from scrapy import Selector
 from qt_material import apply_stylesheet
-from CollegeSchedule.CollegeSchedule.spiders.ScheduleSpider import ScheduleSpider
-
-
-class MyCrawler:
-
-    def __init__(self):
-        self.group = 'I8J5S1'
-        self.output = None
-        self.process = CrawlerProcess(settings={'LOG_ENABLED': False})
-
-    def yield_output(self, data):
-        self.output = data
-
-    def crawl(self, cls):
-        self.process.crawl(cls, args={'callback': self.yield_output, 'group': self.group})
-        self.process.start()
+from scraper import Scraper
 
 
 class MainWindow(QWidget):
@@ -40,10 +23,9 @@ class MainWindow(QWidget):
         self.window = loader.load(ui_file, self)
         ui_file.close()
         self.data = {'notes': dict(), 'hidden': list()}
-        self.raw_schedule = tuple()
-        self.schedule_selector = None
         self.week = 1
         self.sel_block = (-1, -1)
+        self.group = 'WCY18IJ5S1'
 
         self.load_data()
 
@@ -59,12 +41,28 @@ class MainWindow(QWidget):
         self.next_week.clicked.connect(lambda: self.get_week(self.week + 1))
         self.previous_week.clicked.connect(lambda: self.get_week(self.week - 1))
         self.save_note_button.clicked.connect(self.save_note)
-        self.download_button.clicked.connect(self.download_schedule)
+        self.download_button.clicked.connect(lambda: self.download_data(self.group))
         self.table_widget.cellClicked.connect(self.block_clicked)
         self.table_widget.cellDoubleClicked.connect(self.block_double_clicked)
+        self.group_box.currentTextChanged.connect(self.change_group)
 
-        self.get_groups()
-        self.download_schedule()
+        self.scraper = Scraper()
+        self.download_data(self.group)
+        self.set_groups()
+        self.group_box.setCurrentIndex(self.group_box.findText(self.group))
+
+    def set_groups(self):
+        groups = self.scraper.get_groups()
+        self.group_box.blockSignals(True)
+        self.group_box.addItems(groups)
+        self.group_box.blockSignals(False)
+
+    def download_data(self, group):
+        self.scraper.scrap(group)
+        self.table_widget.clearContents()
+        self.get_days()
+
+    def get_days(self):
         today = (datetime.today().day, datetime.today().month)
         weeks = self.get_all_weeks()
         for i, week in enumerate(weeks, start=1):
@@ -72,32 +70,10 @@ class MainWindow(QWidget):
                 self.get_week(i)
                 break
 
-    def get_groups(self):
-        pass
-
-    def download_schedule(self):
-        # self.raw_schedule = crawl(ScheduleSpider)
-        # OFFLINE TEST
-        f = open("e-Dziekanat.html", "r", encoding="iso-8859-2")
-        html = f.read()
-        sel = Selector(text=html)
-        self.raw_schedule = (sel.xpath("//table[@class='tableFormList2SheTeaGrpHTM']").get(),
-                             sel.xpath("//table[@class='tableFormExtForm1ML1']//tr[3]//table[@class='tableGrayWhite']")
-                             .get(),
-                             sel.xpath("//td[@class='tdFormEdit2']//table[@class='tableGrayWhite']").get())
-        # OFFLINE TEST
-        self.schedule_selector = Selector(text=self.raw_schedule[0])
-
     def get_all_weeks(self) -> list:
         weeks = list()
         for i in range(22):
-            first_day = self.schedule_selector \
-                .xpath("//th[position()={} and @class='thFormList1HSheTeaGrpHTM3']/nobr/text()"
-                       .format(4 + i)).getall()
-            next_days = self.schedule_selector \
-                .xpath("//td[position()={} and @class='tdFormList1DDSheTeaGrpHTM3']/nobr/text()"
-                       .format(4 + i)).getall()
-            days = first_day + next_days
+            days = self.scraper.get_days(i)
             dates = list()
             for j in range(0, len(days), 2):
                 dates += [(int(days[j]), roman.fromRoman(days[j + 1]))]
@@ -108,20 +84,8 @@ class MainWindow(QWidget):
         if 1 <= number <= 22:
             self.week = number
             self.note.setPlainText('')
-
-        first_day = self.schedule_selector \
-            .xpath("//th[position()={} and @class='thFormList1HSheTeaGrpHTM3']/nobr/text()"
-                   .format(3 + number)).getall()
-        next_days = self.schedule_selector \
-            .xpath("//td[position()={} and @class='tdFormList1DDSheTeaGrpHTM3']/nobr/text()"
-                   .format(3 + number)).getall()
-        self.set_headers(first_day + next_days)
-
-        blocks = self.schedule_selector \
-            .xpath("//td[position()={} and @class='tdFormList1DSheTeaGrpHTM3']//table "
-                   "| //td[position()={} and @class='tdFormList1DSheTeaGrpHTM3' and count(*)=0]/text()"
-                   .format(2 + number, 2 + number)).getall()
-        self.set_blocks(blocks)
+        self.set_headers(self.scraper.get_days(number - 1))
+        self.set_blocks(self.scraper.get_blocks(number))
 
     def set_headers(self, days):
         dates = list()
@@ -135,13 +99,13 @@ class MainWindow(QWidget):
         column = 0
         for i, block in enumerate(blocks, start=1):
             if block != '\xa0':
-                selector = Selector(text=block)
-                subject = selector.xpath("//tbody/tr[1]/td/nobr/b[1]/text()").get()
-                category = selector.xpath("//tbody/tr[1]/td/nobr/b[2]/text()").get()
-                room = selector.xpath("//tbody/tr[1]/td/nobr/text()[last()]").get()
-                teacher = selector.xpath("//tbody/tr[2]/td/nobr/a/text()").get()
-                number = selector.xpath("//tbody/tr[3]/td/nobr/text()").get()
-                self.add_block(row, column, subject, category, room, teacher, number)
+                block_data = self.scraper.get_block_data(block)
+                self.add_block(row, column,
+                               block_data['subject'],
+                               block_data['category'],
+                               block_data['room'],
+                               block_data['teacher'],
+                               block_data['number'])
             else:
                 self.table_widget.removeCellWidget(row, column)
             row += 1
@@ -201,6 +165,9 @@ class MainWindow(QWidget):
                 if self.get_index(row, column) in self.data['hidden']:
                     self.data['hidden'].remove(self.get_index(row, column))
 
+    def change_group(self, group):
+        self.group = group
+
     def load_data(self):
         data_file = Path("schedule.data")
         if data_file.is_file():
@@ -232,16 +199,6 @@ class MainWindow(QWidget):
     def closeEvent(self, event):
         self.save_data()
         event.accept()
-
-
-group = 'I8J5S1'
-
-
-def crawl(cls):
-    crawler = MyCrawler()
-    crawler.group = group
-    crawler.crawl(cls)
-    return crawler.output
 
 
 if __name__ == "__main__":
