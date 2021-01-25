@@ -84,9 +84,10 @@ class Scraper:
 
     def block_exists(self, group, i, week) -> bool:
         index = i + (week - 1) * 49
-        if 0 <= index < len(self.data.blocks[group]):
-            if self.data.blocks[group][index] is not None:
-                return True
+        if group in self.data.blocks:
+            if 0 <= index < len(self.data.blocks[group]):
+                if self.data.blocks[group][index] is not None:
+                    return True
         return False
 
     def get_week_blocks_from_selector(self, group, week) -> list:  # week indexed from 1

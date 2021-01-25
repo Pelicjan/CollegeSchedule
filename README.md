@@ -15,9 +15,13 @@ CollegeSchedule uses:
 - [urllib3](https://pypi.org/project/urllib3/)
 - [Scrapy](https://scrapy.org/)
 - [roman](https://pypi.org/project/roman/)
+- threading
+- pathlib
 
 ### Screenshots
 ##### Application window right after run
 ![Application window](https://i.imgur.com/O4k2gUG.png)
 ##### Block with saved note selected
 ![Block with note selected](https://i.imgur.com/klIiFUA.png)
+##### Loading indicator (appears when data are downloaded from the server)
+![Loading indicator](https://i.imgur.com/oz9MGpm.png)
