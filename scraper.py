@@ -15,19 +15,22 @@ class Scraper:
                 'password': login_credentials.password.encode('iso-8859-2')
                 }
 
-    def __init__(self, callback, group):
+    def __init__(self):
         self.raw_schedule = tuple()
         self.schedule_selector = None
         self.group_selector = None
         self.data = Data()
         self.s = requests.Session()
         urllib3.disable_warnings()
+
+    def start(self, window, group):
         self.load_data()
         if self.data.blank:
-            callback('')
+            window.loading_signal.emit(True, '', False)
             self.init_scrap(group)
+            window.loading_signal.emit(False, self.data.current_group, True)
         else:
-            callback(self.data.current_group)
+            window.loading_signal.emit(False, self.data.current_group, True)
 
     def log_in(self):
         print("Logowanie do e-Dziekanatu")
@@ -105,18 +108,21 @@ class Scraper:
                                         group=group))
         return block_list
 
-    def get_week_blocks(self, group, week) -> list:  # week indexed from 1
-        self.data.current_group = group
+    def get_week_blocks(self, window, week, force_download) -> list:  # week indexed from 1
+        self.data.current_group = window.group
         block_list = list()
-        if group in self.data.blocks:
-            start_index = (week - 1) * 49
-            end_index = start_index + 49
-            for block in self.data.blocks[group][start_index:end_index]:
-                block_list.append(block)
-            return block_list
-        self.scrap(group)
-        self.set_all_blocks(group)
-        return self.get_week_blocks(group, week)
+        if not force_download:
+            if window.group in self.data.blocks:
+                start_index = (week - 1) * 49
+                end_index = start_index + 49
+                for block in self.data.blocks[window.group][start_index:end_index]:
+                    block_list.append(block)
+                return block_list
+        window.loading_signal.emit(True, window.group, False)
+        self.scrap(window.group)
+        self.set_all_blocks(window.group)
+        window.loading_signal.emit(False, window.group, False)
+        return self.get_week_blocks(window, week, False)
 
     def get_week_dates(self, week) -> list:  # week indexed from 0
         if len(self.data.dates) == 0:
