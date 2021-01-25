@@ -56,8 +56,10 @@ class MainWindow(QWidget):
 
     def load_data(self, force_download=False):
         self.get_days(force_download)
+        self.group_box.blockSignals(True)
         self.set_groups()
         self.group_box.setCurrentIndex(self.group_box.findText(self.group))
+        self.group_box.blockSignals(False)
 
     def get_days(self, force_download):
         today = (datetime.today().day, datetime.today().month)
@@ -133,10 +135,9 @@ class MainWindow(QWidget):
         self.table_widget.setCellWidget(row, column, block_widget)
 
     def set_groups(self):
-        groups = self.scraper.get_groups()
-        self.group_box.blockSignals(True)
+        groups = self.scraper.get_groups().copy()
+        self.group_box.clear()
         self.group_box.addItems(groups)
-        self.group_box.blockSignals(False)
 
     def get_index(self, row, column) -> int:
         return row + column * 7 + (self.week - 1) * 49

@@ -62,7 +62,7 @@ class Scraper:
         self.scrap(group)
         self.set_all_blocks(group)
         self.set_all_dates()
-        self.data.groups = self.group_selector.xpath("//a[@class='aMenu' and contains(@href, 'showGroupPlan')]/text()") \
+        self.data.groups = self.group_selector.xpath("//a[@class='aMenu' and contains(@href, 'showGroupPlan')]/text()")\
             .getall()
 
     def set_all_blocks(self, group):
