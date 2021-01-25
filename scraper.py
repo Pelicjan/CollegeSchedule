@@ -62,7 +62,7 @@ class Scraper:
         self.scrap(group)
         self.set_all_blocks(group)
         self.set_all_dates()
-        self.data.groups = self.group_selector.xpath("//a[@class='aMenu' and contains(@href, 'showGroupPlan')]/text()")\
+        self.data.groups = self.group_selector.xpath("//a[@class='aMenu' and contains(@href, 'showGroupPlan')]/text()") \
             .getall()
 
     def set_all_blocks(self, group):
@@ -82,6 +82,13 @@ class Scraper:
                        .format(4 + i)).getall()
             self.data.dates += first_day + next_days
 
+    def block_exists(self, group, i, week) -> bool:
+        index = i + (week - 1) * 49
+        if 0 <= index < len(self.data.blocks[group]):
+            if self.data.blocks[group][index] is not None:
+                return True
+        return False
+
     def get_week_blocks_from_selector(self, group, week) -> list:  # week indexed from 1
         block_list = list()
         blocks_data = self.schedule_selector.xpath("//td[position()={} and @class='tdFormList1DSheTeaGrpHTM3']//table "
@@ -89,13 +96,15 @@ class Scraper:
                                                    "and count(*)=0]/text() "
                                                    .format(2 + week, 2 + week)).getall()
         for i, block_data in enumerate(blocks_data):
+            hide = self.data.blocks[group][i + (week - 1) * 49].hide if self.block_exists(group, i, week) else False
+            note = self.data.blocks[group][i + (week - 1) * 49].note if self.block_exists(group, i, week) else ''
             if block_data != '\xa0':
                 selector = Selector(text=block_data)
                 block = Block(index=i + (week - 1) * 49,
                               blank=False,
                               group=group,
-                              hide=False,
-                              note='',
+                              hide=hide,
+                              note=note,
                               subject=selector.xpath("//tr[1]/td/nobr/b[1]/text()").get(),
                               category=selector.xpath("//tr[1]/td/nobr/b[2]/text()").get(),
                               room=selector.xpath("//tr[1]/td/nobr/text()[last()]").get(),
@@ -105,7 +114,9 @@ class Scraper:
             else:
                 block_list.append(Block(index=i + (week - 1) * 49,
                                         blank=True,
-                                        group=group))
+                                        group=group,
+                                        hide=hide,
+                                        note=note))
         return block_list
 
     def get_week_blocks(self, window, week, force_download) -> list:  # week indexed from 1

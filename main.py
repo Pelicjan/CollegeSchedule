@@ -103,8 +103,7 @@ class MainWindow(QWidget):
         row = 0
         column = 0
         for i, block in enumerate(self.blocks, start=1):
-            if not block.blank:
-                self.add_block(row, column, block)
+            self.add_block(row, column, block)
             row += 1
             if i % 7 == 0:
                 row = 0
@@ -112,22 +111,25 @@ class MainWindow(QWidget):
 
     def add_block(self, row, column, block):
         block_widget = QWidget()
-        layout = QVBoxLayout()
-        subject_label = QLabel(block.subject, alignment=Qt.AlignCenter)
-        subject_label.setFont(QtGui.QFont("Arial", weight=QtGui.QFont.Bold))
-        layout.addWidget(subject_label)
-        layout.addWidget(QLabel(block.category, alignment=Qt.AlignCenter))
-        layout.addWidget(QLabel(block.room, alignment=Qt.AlignCenter))
-        layout.addWidget(QLabel(block.teacher, alignment=Qt.AlignCenter))
-        layout.addWidget(QLabel(block.number, alignment=Qt.AlignCenter))
         if block.hide:
             block_widget.setProperty('Hide', 'true')
             block_widget.setStyle(block_widget.style())
         if block.note != '':
             block_widget.setProperty('Note', 'true')
             block_widget.setStyle(block_widget.style())
-        block_widget.setLayout(layout)
-        block_widget.setProperty('class', 'block')
+        if not block.blank:
+            layout = QVBoxLayout()
+            subject_label = QLabel(block.subject, alignment=Qt.AlignCenter)
+            subject_label.setFont(QtGui.QFont("Arial", weight=QtGui.QFont.Bold))
+            layout.addWidget(subject_label)
+            layout.addWidget(QLabel(block.category, alignment=Qt.AlignCenter))
+            layout.addWidget(QLabel(block.room, alignment=Qt.AlignCenter))
+            layout.addWidget(QLabel(block.teacher, alignment=Qt.AlignCenter))
+            layout.addWidget(QLabel(block.number, alignment=Qt.AlignCenter))
+            block_widget.setLayout(layout)
+            block_widget.setProperty('class', 'block')
+        else:
+            block_widget.setProperty('class', 'invisible_block')
         self.table_widget.setCellWidget(row, column, block_widget)
 
     def set_groups(self):
@@ -175,7 +177,7 @@ class MainWindow(QWidget):
     def block_double_click(self, row, column):
         block = self.table_widget.cellWidget(row, column)
         if block is not None:
-            hide = block.property('Hide') if block.property('Hide') is not None else True
+            hide = not block.property('Hide') if block.property('Hide') is not None else True
             block.setProperty('Hide', hide)
             block.setStyle(block.style())
             children = block.findChildren(QLabel)

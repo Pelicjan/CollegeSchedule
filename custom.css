@@ -73,3 +73,6 @@ QComboBox {
 QComboBox QAbstractItemView {
     selection-color: #8bc34a;
 }
+QWidget.invisible_block {
+    background-color: #00000000;
+}
